@@ -1,17 +1,19 @@
 import pandas as pd
 import numpy as np
-md = pd. read_csv('../datamovies_metadata.csv')
+md = pd. read_csv('../data/movies_metadata.csv')
 md.head(3)
 md['genres'] = md['genres'].fillna('[]').apply(literal_eval).apply(lambda x: [i['name'] for i in x] if isinstance(x, list) else [])
 vote_counts = md[md['vote_count'].notnull()]['vote_count'].astype('int')
 vote_averages = md[md['vote_average'].notnull()]['vote_average'].astype('int')
 C = vote_averages.mean()
 m = vote_counts.quantile(0.95)
+#release date containg only year of release
 md['year'] = pd.to_datetime(md['release_date'], errors='coerce').apply(lambda x: str(x).split('-')[0] if x != np.nan else np.nan)
 qualified = md[(md['vote_count'] >= m) & (md['vote_count'].notnull()) & (md['vote_average'].notnull())][['title', 'year', 'vote_count', 'vote_average', 'popularity', 'genres']]
 qualified['vote_count'] = qualified['vote_count'].astype('int')
 qualified['vote_average'] = qualified['vote_average'].astype('int')
 qualified.head()
+#weighted ratings based on vote_count and vote_average
 def weighted_rating(x):
     v = x['vote_count']
     R = x['vote_average']
@@ -38,5 +40,5 @@ def build_chart(genre, percentile=0.95):
     qualified = qualified.sort_values('wr', ascending=False).head(250)
     
     return qualified
-	
+#print top 15 Romantic movies	
 build_chart('Romance').head(15)	
