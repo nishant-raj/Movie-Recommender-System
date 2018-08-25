@@ -6,8 +6,8 @@ import pandas as pd
 from sklearn.feature_extraction.text import TfidfVectorizer, CountVectorizer
 from sklearn.metrics.pairwise import linear_kernel, cosine_similarity
 
-md = pd. read_csv('E:/data/movielens/movies_metadata.csv')
-links_small = pd.read_csv('E:/data/movielens/links_small.csv')
+md = pd. read_csv('../data/movies_metadata.csv')
+links_small = pd.read_csv('../data/links_small.csv')
 links_small = links_small[links_small['tmdbId'].notnull()]['tmdbId'].astype('int')
 
 md = md.drop([19730, 29503, 35587])
@@ -36,5 +36,6 @@ def get_recommendations(title):
     sim_scores = sim_scores[1:31]
     movie_indices = [i[0] for i in sim_scores]
     return titles.iloc[movie_indices]
-	
+
+#recommended movies similar to godfather
 get_recommendations('The Godfather').head(10)	
